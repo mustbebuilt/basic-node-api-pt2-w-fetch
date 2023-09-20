@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>Fetch with Then Chaining</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Fetch with Then Chaining</h1>
+                    <nav>
+                <ul>
+                    <li><a href="index.html">Main Examples</a></li>
+                    <li><a href="oldthen.html">Fetch with Promise</a></li>
+                    <li><a href="newasync.html">Fetch with Async / Await</a></li>
+                </ul>
+            </nav>
+      </header>
+      <main>
+        <section>
+            <div>
+                <p>In this example, we make an HTTP GET request to retrieve a JSON response and handle it using the then() method.</p>
+                <p>The code you provided demonstrates the use of promises in JavaScript to make an HTTP GET request to an API and handle the response. Here&#39;s an explanation of the promises used in the code:</p>
+<ol>
+<li><p><code>fetch(&#39;https://jsonplaceholder.typicode.com/posts/1&#39;)</code>:</p>
+<ul>
+<li>The <code>fetch</code> function initiates an HTTP GET request to the specified URL (in this case, &#39;<a href="https://jsonplaceholder.typicode.com/posts/1">https://jsonplaceholder.typicode.com/posts/1</a>&#39;).</li>
+<li>It returns a promise that resolves to a <code>Response</code> object once the network request is complete.</li>
+</ul>
+</li>
+<li><p><code>.then(function(response) { ... })</code>:</p>
+<ul>
+<li>This is the first <code>then</code> block chained to the fetch promise.</li>
+<li>It takes a function as an argument, which will be called when the fetch promise is successfully resolved with the <code>Response</code> object.</li>
+<li>Inside this function, there&#39;s a check to see if the response status is okay using <code>response.ok</code>. If it&#39;s not okay (e.g., a 404 or other error status), it throws an error with <code>throw new Error(&#39;Network response was not ok&#39;)</code>.</li>
+<li>If the response is okay, it returns the JSON data of the response using <code>return response.json()</code>.</li>
+</ul>
+</li>
+<li><p><code>.then(function(data) { ... })</code>:</p>
+<ul>
+<li>This is the second <code>then</code> block chained to the first <code>then</code> block.</li>
+<li>It takes a function as an argument, which will be called when the promise returned by <code>response.json()</code> is resolved successfully with the parsed JSON data.</li>
+<li>Inside this function, the JSON data is logged to the console using <code>console.log(data)</code>.</li>
+</ul>
+</li>
+<li><p><code>.catch(function(error) { ... })</code>:</p>
+<ul>
+<li>This <code>catch</code> block is used to handle any errors that may occur at any point in the promise chain.</li>
+<li>If an error is thrown in the first <code>then</code> block due to a network response that is not okay, or if there&#39;s any other error during the process, this block will catch and handle it.</li>
+<li>Inside this function, the error is logged to the console using <code>console.error(&#39;Fetch error:&#39;, error)</code>.</li>
+</ul>
+</li>
+</ol>
+<p>In summary, this code demonstrates how promises and promise chaining are used to make an HTTP GET request, handle the response, and log the data to the console. It also handles errors that may occur during the fetch process.</p>
+
+            </div>
+        </section>
+        <section>
+          <ul id="film-list"></ul>
+        </section>
+      </main>
+    </div>
+  </body>
+  <script>
+   // Using then() with fetch
+function fetchDataWithThen() {
+  fetch('api/')
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      console.dir(data);
+            const filmList = data.map((film) => {
+            return `<li><a href="details.html?filmID=${film._id}">${film.filmTitle}</a></li>`;
+          });
+
+          const filmListContainer = document.getElementById("film-list");
+          filmListContainer.innerHTML = filmList.join("");
+    })
+    .catch(function(error) {
+      console.error('Fetch error:', error);
+    });
+}
+
+// Call the function to fetch data
+fetchDataWithThen();
+</script>
+</html>

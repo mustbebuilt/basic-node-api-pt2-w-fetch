@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/main.css" />
+    <title>Fetch with Async / Await</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Fetch with Async / Await</h1>
+                    <nav>
+                <ul>
+                    <li><a href="index.html">Main Examples</a></li>
+                    <li><a href="oldthen.html">Fetch with Promise</a></li>
+                    <li><a href="newasync.html">Fetch with Async / Await</a></li>
+                </ul>
+            </nav>
+      </header>
+      <main>
+        <section>
+
+<h3>Using <code>async/await</code> with <code>fetch</code></h3>
+<p>Refactored code to useing <code>async/await</code> with arrow functions, which can make asynchronous code more concise and readable:</p>
+<p>In this updated code:</p>
+<ul>
+<li>We declare an <code>async</code> function <code>fetchDataWithAsyncAwait()</code> to fetch data asynchronously.</li>
+<li>We use <code>await</code> to pause the execution until the <code>fetch</code> request and <code>response.json()</code> parsing are complete.</li>
+<li>We handle errors using a <code>try...catch</code> block, making error handling more structured and readable.</li>
+</ul>
+<p>By using <code>async/await</code>, the code becomes more readable and maintains a sequential flow, making it easier to handle asynchronous operations.</p>
+        </section>
+        <section>
+          <ul id="film-list"></ul>
+        </section>
+      </main>
+    </div>
+  </body>
+  <script>
+ // Using async/await with fetch and arrow functions
+async function fetchDataWithAsyncAwait() {
+  try {
+    const response = await fetch('api/');
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();
+    console.dir(data);
+    const filmList = data.map((film) => {
+            return `<li><a href="details.html?filmID=${film._id}">${film.filmTitle}</a></li>`;
+          });
+
+          const filmListContainer = document.getElementById("film-list");
+          filmListContainer.innerHTML = filmList.join("");
+  } catch (error) {
+    console.error('Fetch error:', error);
+  }
+}
+
+// Call the async function to fetch data
+fetchDataWithAsyncAwait();
+
+</script>
+</html>
