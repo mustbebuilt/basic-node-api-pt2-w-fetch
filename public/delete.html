@@ -2,8 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="X-UA-Compatible"
+      content="IE=edge"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <link rel="stylesheet" href="css/main.css" />
     <title>Delete Film</title>
   </head>
@@ -11,7 +17,7 @@
     <div class="container">
       <header>
         <h1>Fetch REST Demos</h1>
-                <nav>
+        <nav>
           <ul>
             <li><a href="index.html">Home</a></li>
           </ul>
@@ -19,7 +25,7 @@
       </header>
       <main>
         <section>
-          <h2>Delete <span id="filmTitle""></span></h2>
+          <h2>Delete <span id="filmTitle"></span></h2>
           <form id="deleteForm">
             <input type="hidden" name="filmID" id="filmID" />
 
@@ -41,39 +47,58 @@
   </body>
   <script>
     (function () {
-      let urlParams = new URLSearchParams(window.location.search);
-      let filmID = urlParams.get("filmID");
-      // MongoDb
-      const api = `/api/${filmID}`;
-      let displayList = [];
-      async function getData() {
-        const response = await fetch(api);
-        const json = await response.json();
-        return json;
+      async function fetchData() {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const filmID = urlParams.get("filmID");
+          const api = `/api/${filmID}`;
+          const response = await fetch(api);
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const myJson = await response.json();
+          return myJson;
+        } catch (error) {
+          console.error("Fetch error:", error);
+          return null;
+        }
       }
-      getData()
-        .then((myJson) => {
-          console.dir(myJson);
-          document.getElementById("filmID").value = myJson.filmID;
-          document.getElementById("filmTitle").innerText = myJson.filmTitle;
-    
-        })
-        .catch(() => console.log("damn that Jason"));
 
-      // Delete Form
+      async function populateData() {
+        const myJson = await fetchData();
+        if (!myJson) return;
 
-      document.getElementById("deleteForm").addEventListener("submit", (ev) => {
+        document.getElementById("filmID").value = myJson.filmID;
+        document.getElementById("filmTitle").innerText = myJson.filmTitle;
+      }
+
+      async function deleteFilm(ev) {
         ev.preventDefault();
-        fetch(api, {
-          method: "DELETE",
-          mode: "cors",
-        })
-          .then((response) => response.status)
-          .then((status) => {
-            if (status == 202 || status == 200) {
-              window.location.href = "index.html";
-            }
+        const urlParams = new URLSearchParams(window.location.search);
+        const filmID = urlParams.get("filmID");
+        const api = `/api/${filmID}`;
+
+        try {
+          const response = await fetch(api, {
+            method: "DELETE",
+            mode: "cors",
           });
+
+          const status = response.status;
+
+          if (status == 202 || status == 200) {
+            window.location.href = "index.html";
+          }
+        } catch (error) {
+          console.error("Delete error:", error);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        await populateData();
+        document.getElementById("deleteForm").addEventListener("submit", deleteFilm);
       });
     })();
   </script>

@@ -21,7 +21,7 @@
         <section>
           <h2>Edit</h2>
           <form id="editForm">
-            <input type="hidden" name="filmID" id="filmID" />
+<input type="hidden" name="filmID" id="filmID" />
             <div>
               <label for="filmTitle">Film Title</label>
               <input type="text" name="filmTitle" id="filmTitle" />
@@ -75,6 +75,7 @@
                 />
               </p>
             </div>
+          
           </form>
           <h3 id="resp"></h3>
         </section>
@@ -83,63 +84,83 @@
   </body>
   <script>
     (function () {
-      let urlParams = new URLSearchParams(window.location.search);
-      let filmID = urlParams.get("filmID");
-      const api = `/api/${filmID}`;
-      let displayList = [];
-      async function getData() {
-        const response = await fetch(api);
-        const json = await response.json();
-        return json;
-      }
-      getData()
-        .then((myJson) => {
-          console.dir(myJson);
-          // change from obj.filmID to obj._id for MongoDb
-          document.getElementById("filmID").value = myJson._id;
-          document.getElementById("filmTitle").value = myJson.filmTitle;
-          document.getElementById("filmCertificate").value =
-            myJson.filmCertificate;
-          document.getElementById("filmImage").value = myJson.filmImage;
-          document.getElementById("filmPrice").value = myJson.filmPrice;
-          document.getElementById("filmDescription").value =
-            myJson.filmDescription;
-          document.getElementById("releaseDate").value = myJson.releaseDate;
-          let starsAr = document.getElementsByName("stars");
-          for (let radioBtn of starsAr) {
-            if (myJson.stars == radioBtn.value) {
-              radioBtn.checked = true;
-            }
+      // Function to fetch data from the API
+      async function fetchData() {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const filmID = urlParams.get("filmID");
+          const api = `/api/${filmID}`;
+          const response = await fetch(api);
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
           }
-        })
-        .catch(() => console.log("damn that Jason"));
 
-      // Edit Form
+          const myJson = await response.json();
+          return myJson;
+        } catch (error) {
+          console.error("Fetch error:", error);
+        }
+      }
 
-      document.getElementById("editForm").addEventListener("submit", (ev) => {
+      // Function to populate form fields with data
+      async function populateForm() {
+        const myJson = await fetchData();
+        if (!myJson) return;
+
+        document.getElementById("filmID").value = myJson._id;
+        document.getElementById("filmTitle").value = myJson.filmTitle;
+        document.getElementById("filmCertificate").value = myJson.filmCertificate;
+        document.getElementById("filmImage").value = myJson.filmImage;
+        document.getElementById("filmPrice").value = myJson.filmPrice;
+        document.getElementById("filmDescription").value = myJson.filmDescription;
+        document.getElementById("releaseDate").value = myJson.releaseDate;
+
+        const starsAr = document.getElementsByName("stars");
+        for (const radioBtn of starsAr) {
+          if (myJson.stars == radioBtn.value) {
+            radioBtn.checked = true;
+          }
+        }
+      }
+
+      // Function to handle form submission
+      async function submitForm(ev) {
         ev.preventDefault();
-        var formData = new FormData(ev.target);
-        var sendObject = {};
+        const formData = new FormData(ev.target);
+        const sendObject = {};
+
         formData.forEach(function (value, key) {
           sendObject[key] = value;
         });
-        console.dir(sendObject);
-        var sendStr = JSON.stringify(sendObject);
-        fetch(api, {
-          method: "PUT",
-          mode: "cors",
-          body: sendStr,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => response.status)
-          .then((status) => {
-            console.info(status);
-            if (status == 202 || status == 200) {
-              document.getElementById("resp").innerText = "Updated";
-            }
+
+        const api = `/api/${sendObject.filmID}`;
+        const sendStr = JSON.stringify(sendObject);
+
+        try {
+          const response = await fetch(api, {
+            method: "PUT",
+            mode: "cors",
+            body: sendStr,
+            headers: {
+              "Content-Type": "application/json",
+            },
           });
+
+          const status = response.status;
+
+          if (status == 202 || status == 200) {
+            document.getElementById("resp").innerText = "Updated";
+          }
+        } catch (error) {
+          console.error("Fetch error:", error);
+        }
+      }
+
+      // Fetch data and set up event listeners
+      document.addEventListener("DOMContentLoaded", async function () {
+        await populateForm();
+        document.getElementById("editForm").addEventListener("submit", submitForm);
       });
     })();
   </script>
