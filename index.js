@@ -5,6 +5,9 @@ const routes = require('./routes/routes');
 
 // Other middleware and configurations...
 
+// Middleware for parsing JSON bodies
+app.use(express.json());
+
 // Mount the routes
  app.use('/', routes);
 
