@@ -18,7 +18,7 @@ async function getDataById(id) {
     // Query the collection to retrieve a document by ID
     let o_id = new ObjectId(id);
     const film  = await collection.find({ _id: o_id }).toArray();
-    return film;
+    return film[0];
   } catch (error) {
     console.error('Error retrieving data:', error);
     return({ error: 'Failed to retrieve data' });
