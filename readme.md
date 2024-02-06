@@ -20,10 +20,6 @@ Changes can be made and the pages will refresh when started with:
 npm start
 ```
 
-If installed globally you can use:
 
-```console
-nodemon app.js
-```
 
 
