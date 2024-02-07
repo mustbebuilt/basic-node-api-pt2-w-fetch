@@ -15,6 +15,10 @@ MongoDB Compass is a GUI for working with your MongoDB database.
 
 [Compass](https://www.mongodb.com/products/tools/compass)
 
+## In MongoDB Create a Database
+
+In MongoDB Compass create a new database called `myMovieDb` and a collection called  `filmsCollection`.  Import the data found in the `sammpleData` folder.
+
 ## Install the Application
 
 Install via terminal with
